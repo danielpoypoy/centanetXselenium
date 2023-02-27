@@ -11,14 +11,26 @@ driver = webdriver.Chrome()
 driver.maximize_window()
 driver.get("https://hk.centanet.com/findproperty/en/list/transaction")
 
+def capitalize(words):
+    for i in range(len(words)):
+        words[i] = words[i].capitalize()
+    words = ' '.join(words)
+    return words
+
 #Input address and select sold/lease
 wait = WebDriverWait(driver, 10)
 inputElem = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "input")))
 inputElem.clear()
-inputElem.send_keys('Discovery Park')
+print('Enter property name:')
+propertys = input()
+capitalize(propertys)
+print('Enter Sold/Leased:')
+sold_leased = input()
+capitalize(sold_leased)
+inputElem.send_keys(propertys)
 wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-search"))).click()
 wait.until(EC.element_to_be_clickable((By.XPATH, "//button[@class='btn-fiter']/span[contains(text(), 'Sold / Leased')]"))).click()
-wait.until(EC.element_to_be_clickable((By.XPATH, "//span[@class='el-radio__label']/span[contains(text(), 'Sold')]"))).click()
+wait.until(EC.element_to_be_clickable((By.XPATH, "//span[@class='el-radio__label']/span[contains(text(), '%s')]"%sold_leased))).click()
 click_next = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "btn-next")))
 
 #put element to lst
@@ -34,7 +46,7 @@ while True:
     content = driver.find_element(By.CSS_SELECTOR, "#__layout .bx--structured-list")
     info_date = content.find_elements(By.CLASS_NAME,"info-date")
     Date = Date + it(info_date)
-    info_address = content.find_elements(By.XPATH, "//div[@class='cv-structured-list-data bx--structured-list-td']/div[contains(text(), 'Discovery Park')]")
+    info_address = content.find_elements(By.XPATH, "//div[@class='cv-structured-list-data bx--structured-list-td']/div[contains(text(), '%s')]"%propertys)
     Address = Address + it(info_address)
     tranprice = content.find_elements(By.CLASS_NAME,"tranPrice")
     Price = Price + it(tranprice)
